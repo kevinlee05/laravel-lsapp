@@ -5,9 +5,9 @@
 <p>This is the Services Page</p>
 @if(count($services) > 0)
     <p>These are our services:</p>
-    <ul>
+    <ul class="list-group">
     @foreach($services as $service)
-        <li>{{ $service }}</li>
+        <li class="list-group-item">{{ $service }}</li>
     @endforeach
     </ul>
 @else
