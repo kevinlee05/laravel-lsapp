@@ -9,7 +9,7 @@
         
     </head>
     <body>
-        <h1>Welcome to Laravel</h1>
-        <p>This is the Laravel from Scratch tutorial by Brad Traversy</p>
+        <h1>Services Page</h1>
+        <p>This is the Services Page</p>
     </body>
 </html>

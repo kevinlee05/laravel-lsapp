@@ -11,18 +11,20 @@
 |
 */
 
+#controller functions should be in controllers rather than as callbacks
 Route::get('/', 'PagesController@index');
-#controller functions should be in controllers 
-#rather than as callbacks
+Route::get('/about', 'PagesController@about');
+Route::get('/services', 'PagesController@services');
 
-Route::get('/hello', function(){
-    return '<h1>Hello!!!!</h1>';
-});
 
-Route::get('/about', function(){
-    return view('pages.about'); //can also use pages/about
-});
+// Route::get('/hello', function(){
+//     return '<h1>Hello!!!!</h1>';
+// });
 
-Route::get('/users/{id}/{name}', function($id, $name){
-    return 'This is user '.$id.' with name of '.$name;
-}); 
+// Route::get('/about', function(){
+//     return view('pages.about'); //can also use pages/about
+// });
+
+// Route::get('/users/{id}/{name}', function($id, $name){
+//     return 'This is user '.$id.' with name of '.$name;
+// }); 
