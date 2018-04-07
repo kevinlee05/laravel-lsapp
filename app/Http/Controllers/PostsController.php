@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Post;
+use DB; #for manual sql queries
 
 class PostsController extends Controller
 {
@@ -13,7 +15,14 @@ class PostsController extends Controller
      */
     public function index()
     {
-        //
+       
+        //return Post::all()
+        //need get for queries, use desc to get the most recent post
+        //return Post::where('title', 'Post Two')->get();
+        // $posts = DB::select('SELECT * FROM posts'); #manual sql query using DB
+        // $posts = Post::orderBy('title', 'desc')->take(2)->get(); //use take() to choose the number of items to retrieve
+        $posts = Post::orderBy('title', 'desc')->paginate(1);
+        return view('posts.index')->with('posts', $posts);
     }
 
     /**
@@ -45,7 +54,8 @@ class PostsController extends Controller
      */
     public function show($id)
     {
-        //
+        $post = Post::find($id);
+        return view('posts.show')->with('post', $post);
     }
 
     /**
