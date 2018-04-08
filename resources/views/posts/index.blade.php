@@ -7,7 +7,7 @@
             <div class="card">
                 <h3><a href="/posts/{{ $post->id }}">{{ $post->title }} </a></h3>
                 <p>{!! $post->body !!} </p>
-                <small>Written on {{ $post->created_at }} </small>
+                <small>Written on {{ $post->created_at }} by {{$post->user->name}} </small>
             </div>
         @endforeach
         {{$posts->links()}} 
