@@ -9,6 +9,18 @@ use DB; #for manual sql queries
 class PostsController extends Controller
 {
     /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        // simply by adding a constructor and middleware the routes in this controller get authentication
+        // the 'except' array lists the views to be excepted from authentication requirements
+        $this->middleware('auth', ['except' => ['index', 'show' ]]);
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
