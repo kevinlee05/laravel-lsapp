@@ -91,6 +91,10 @@ class PostsController extends Controller
     public function edit($id)
     {
         $post = Post::find($id);
+        //check for correct user
+        if(auth()->user()->id !== $post->user_id){
+            return redirect('/posts')->with('error', 'Nice try. You are not authorized to edit this');
+        }
         return view('posts.edit')->with('post', $post);
     }
 
@@ -110,6 +114,10 @@ class PostsController extends Controller
 
         // Create Post
         $post = Post::find($id);
+        //check for correct user
+        if(auth()->user()->id !== $post->user_id){
+            return redirect('/posts')->with('error', 'Nice try. You are not authorized to update this');
+        }
         $post->title = $request->input('title');
         $post->body = $request->input('body');
         $post->save();
@@ -126,6 +134,10 @@ class PostsController extends Controller
     public function destroy($id)
     {
         $post = Post::find($id);
+        //check for correct user
+        if(auth()->user()->id !== $post->user_id){
+            return redirect('/posts')->with('error', 'Nice try. You are not authorized to delete this');
+        }
         $post->delete();
         return redirect('/posts')->with('success', 'Post Deleted Successfully!');
     }
