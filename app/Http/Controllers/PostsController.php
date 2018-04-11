@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Post;
 use DB; #for manual sql queries
 
@@ -57,16 +58,35 @@ class PostsController extends Controller
     {
         $this->validate($request, [
             'title' => 'required',
-            'body' => 'required'
+            'body' => 'required',
+            'cover_image' => 'image|nullable|max:1999'  
+            //default size for apache server is 2mb and will throw an error so need to set bigger
         ]);
+
+        // Handle File Upload
+        if($request->hasFile('cover_image')){
+            // Get filename with the extension
+            $filenameWithExt = $request->file('cover_image')->getClientOriginalName();
+            // Get just filename
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            // Get just extension
+            $extension = $request->file('cover_image')->getClientOriginalExtension();
+            // Filename to store
+            $fileNameToStore = $filename.'_'.time().'.'.$extension;
+            // Upload Image
+            $path = $request->file('cover_image')->storeAs('public/cover_images', $fileNameToStore);
+            // use 'php artisan storage:link' to create a symlink to storage
+        } else {
+            $fileNameToStore = 'noimage.jpg'; //default image for no upload
+        }
 
         // Create Post
         $post = new Post;
         $post->title = $request->input('title');
         $post->body = $request->input('body');
         $post->user_id = auth()->user()->id;
+        $post->cover_image = $fileNameToStore;
         $post->save();
-
         return redirect('/posts')->with('success', 'Post Created');
     }
 
@@ -90,6 +110,7 @@ class PostsController extends Controller
      */
     public function edit($id)
     {
+        
         $post = Post::find($id);
         //check for correct user
         if(auth()->user()->id !== $post->user_id){
@@ -112,6 +133,21 @@ class PostsController extends Controller
             'body' => 'required'
         ]);
 
+        // Handle File Upload
+        if($request->hasFile('cover_image')){
+            // Get filename with the extension
+            $filenameWithExt = $request->file('cover_image')->getClientOriginalName();
+            // Get just filename
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            // Get just extension
+            $extension = $request->file('cover_image')->getClientOriginalExtension();
+            // Filename to store
+            $fileNameToStore = $filename.'_'.time().'.'.$extension;
+            // Upload Image
+            $path = $request->file('cover_image')->storeAs('public/cover_images', $fileNameToStore);
+            // use 'php artisan storage:link' to create a symlink to storage
+        } 
+
         // Create Post
         $post = Post::find($id);
         //check for correct user
@@ -120,6 +156,9 @@ class PostsController extends Controller
         }
         $post->title = $request->input('title');
         $post->body = $request->input('body');
+        if($request->hasFile('cover_image')){
+            $post->cover_image = $fileNameToStore;
+        }
         $post->save();
 
         return redirect('/posts')->with('success', 'Post Edited Successfully!');
@@ -138,6 +177,13 @@ class PostsController extends Controller
         if(auth()->user()->id !== $post->user_id){
             return redirect('/posts')->with('error', 'Nice try. You are not authorized to delete this');
         }
+
+        if($post->cover_image != 'noimage.jpg'){
+            // Delete Image
+            Storage::delete('public/cover_images/'.$post->cover_image); //use storage object
+
+        }
+
         $post->delete();
         return redirect('/posts')->with('success', 'Post Deleted Successfully!');
     }
